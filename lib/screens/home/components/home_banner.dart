@@ -113,7 +113,7 @@ class AnimatedText extends StatelessWidget {
           speed: Duration(milliseconds: 60),
         ),
         TyperAnimatedText(
-          "Chat app with dark and light theme.",
+          "Chat Novel apps with dark and Light Theme",
           speed: Duration(milliseconds: 60),
         ),
       ],

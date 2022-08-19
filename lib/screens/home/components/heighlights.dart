@@ -27,6 +27,13 @@ class HighLightsInfo extends StatelessWidget {
                       ),
                       label: "Connections",
                     ),
+                    HeighLight(
+                      counter: AnimatedCounter(
+                        value: 10,
+                        text: "+",
+                      ),
+                      label: "Published Apps",
+                    ),
                   ],
                 ),
                 const SizedBox(height: defaultPadding),
@@ -56,17 +63,17 @@ class HighLightsInfo extends StatelessWidget {
               children: [
                 HeighLight(
                   counter: AnimatedCounter(
-                    value: 119,
-                    text: "K+",
+                    value: 10,
+                    text: "+",
                   ),
-                  label: "Subscribers",
+                  label: "Published Apps",
                 ),
                 HeighLight(
                   counter: AnimatedCounter(
-                    value: 40,
+                    value: 100,
                     text: "+",
                   ),
-                  label: "Videos",
+                  label: "Connections",
                 ),
                 HeighLight(
                   counter: AnimatedCounter(
@@ -78,7 +85,7 @@ class HighLightsInfo extends StatelessWidget {
                 HeighLight(
                   counter: AnimatedCounter(
                     value: 13,
-                    text: "K+",
+                    text: "+",
                   ),
                   label: "Stars",
                 ),

@@ -29,6 +29,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^2.1.0
   firebase_core:
+  cloud_firestore:
   flutter_svg: ^0.22.0
   animated_text_kit: ^4.2.1
   url_launcher:

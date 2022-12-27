@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile/components/animated_progress_indicator.dart';
 
@@ -10,42 +11,41 @@ class Skills extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: defaultPadding),
-          child: Text(
-            "Skills",
-            style: Theme.of(context).textTheme.subtitle2,
-          ),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: AnimatedCircularProgressIndicator(
-                percentage: 0.88,
-                label: "Flutter",
+    return FutureBuilder(
+      future: FirebaseFirestore.instance.collection("skills").get(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if(snapshot.hasData){
+          var data = snapshot.data!.docs;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: defaultPadding),
+                child: Text(
+                  "Skills",
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
               ),
-            ),
-            SizedBox(width: defaultPadding),
-            Expanded(
-              child: AnimatedCircularProgressIndicator(
-                percentage: 0.75,
-                label: "NodeJs",
+              Row(
+                children: [
+                  ...data.map((e) => Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: defaultPadding),
+                      child: AnimatedCircularProgressIndicator(
+                        percentage: e["value"],
+                        label: e["name"],
+                      ),
+                    ),
+                  ),).toList(),
+                ],
               ),
-            ),
-            SizedBox(width: defaultPadding),
-            Expanded(
-              child: AnimatedCircularProgressIndicator(
-                percentage: 0.9,
-                label: "Firebase",
-              ),
-            ),
-          ],
-        ),
-      ],
+            ],
+          );
+        }else{
+          return SizedBox();
+        }
+      },
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -10,23 +11,30 @@ class Knowledges extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(
-              vertical: defaultPadding),
-          child: Text(
-            "Knowledges",
-            style: Theme.of(context).textTheme.subtitle2,
-          ),
-        ),
-        KnowledgeText(text: "Flutter, Dart, Java"),
-        KnowledgeText(text: "HTML, CSS, EJS"),
-        KnowledgeText(text: "JavaScript, MySQL, MongoDB"),
-        KnowledgeText(text: "GIT Knowledge"),
-      ],
+    return FutureBuilder(
+      future: FirebaseFirestore.instance.collection("knowledge").get(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if(snapshot.hasData){
+          var data = snapshot.data!.docs;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Divider(),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: defaultPadding),
+                child: Text(
+                  "Knowledge",
+                  style: Theme.of(context).textTheme.subtitle2,
+                ),
+              ),
+              ...data.map((e) => KnowledgeText(text: e["text"])).toList(),
+            ],
+          );
+      }else{
+          return SizedBox();
+        }
+      },
     );
   }
 }

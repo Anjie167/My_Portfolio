@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile/models/Project.dart';
 import 'package:flutter_profile/responsive.dart';
@@ -46,19 +48,30 @@ class ProjectsGridView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: demo_projects.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        childAspectRatio: childAspectRatio,
-        crossAxisSpacing: defaultPadding,
-        mainAxisSpacing: defaultPadding,
-      ),
-      itemBuilder: (context, index) => ProjectCard(
-        project: demo_projects[index],
-      ),
+    return FutureBuilder(
+      future: FirebaseFirestore.instance.collection("projects").get(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+        if(snapshot.hasData){
+          List<Project> projects = snapshot.data!.docs.map((element) => Project.fromJson(element)).toList();
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemCount: projects.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              childAspectRatio: childAspectRatio,
+              crossAxisSpacing: defaultPadding,
+              mainAxisSpacing: defaultPadding,
+            ),
+            itemBuilder: (context, index) => ProjectCard(
+              project: projects[index],
+            ),
+          );
+        }else{
+          return SizedBox();
+        }
+
+      },
     );
   }
 }

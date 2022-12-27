@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 class MyInfo extends StatelessWidget {
   const MyInfo({
-    Key? key,
+    Key? key, required this.profileImage, required this.myName, required this.myJob,
   }) : super(key: key);
 
+  final String profileImage, myName, myJob;
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
@@ -16,15 +17,15 @@ class MyInfo extends StatelessWidget {
             Spacer(flex: 2),
             CircleAvatar(
               radius: 50,
-              backgroundImage: AssetImage("assets/images/img.jpg"),
+              backgroundImage: NetworkImage(profileImage),
             ),
             Spacer(),
             Text(
-              "Anjola Favour",
+              myName,
               style: Theme.of(context).textTheme.subtitle2,
             ),
             Text(
-              "Mobile App Developer",
+              myJob,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.w200,

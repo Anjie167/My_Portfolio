@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_profile/responsive.dart';
 
@@ -13,54 +14,53 @@ class HomeBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: Responsive.isMobile(context) ? 2.5 : 3,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
-            "assets/images/background.jpeg",
-            fit: BoxFit.cover,
-          ),
-          Container(color: darkColor.withOpacity(0.66)),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Discover my Amazing \nArt Space!",
-                  style: Responsive.isDesktop(context)
-                      ? Theme.of(context).textTheme.headline3!.copyWith(
+      child: FutureBuilder(
+          future: FirebaseFirestore.instance.collection("config").get(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+            if(snapshot.hasData){
+              var data = snapshot.data!.docs.first;
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image(
+                    image: NetworkImage(
+                    data["home_background"],
+                  ),
+                    fit: BoxFit.cover,
+                  ),
+                  Container(color: darkColor.withOpacity(0.66)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          data["home_title"],
+                          style: Responsive.isDesktop(context)
+                              ? Theme.of(context).textTheme.headline3!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           )
-                      : Theme.of(context).textTheme.headline5!.copyWith(
+                              : Theme.of(context).textTheme.headline5!.copyWith(
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
-                ),
-                if (Responsive.isMobileLarge(context))
-                  const SizedBox(height: defaultPadding / 2),
-                MyBuildAnimatedText(),
-                SizedBox(height: defaultPadding),
-                if (!Responsive.isMobileLarge(context))
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: defaultPadding * 2,
-                          vertical: defaultPadding),
-                      backgroundColor: primaryColor,
+                        ),
+                        if (Responsive.isMobileLarge(context))
+                          const SizedBox(height: defaultPadding / 2),
+                        MyBuildAnimatedText(),
+                        SizedBox(height: defaultPadding),
+                      ],
                     ),
-                    child: Text(
-                      "EXPLORE NOW",
-                      style: TextStyle(color: darkColor),
-                    ),
-                  ),
-              ],
-            ),
-          )
-        ],
+                  )
+                ],
+              );
+            }else{
+              return SizedBox();
+            }
+        },
+
       ),
     );
   }
@@ -102,21 +102,32 @@ class AnimatedText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedTextKit(
-      animatedTexts: [
-        TyperAnimatedText(
-          "responsive web and mobile app.",
-          speed: Duration(milliseconds: 60),
-        ),
-        TyperAnimatedText(
-          "complete serialised book reading app",
-          speed: Duration(milliseconds: 60),
-        ),
-        TyperAnimatedText(
-          "Chat Novel apps with dark and Light Theme",
-          speed: Duration(milliseconds: 60),
-        ),
-      ],
+    return FutureBuilder(
+        future: FirebaseFirestore.instance.collection("animated_texts").get(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+          if(snapshot.hasData){
+            var data = snapshot.data!.docs;
+            return AnimatedTextKit(
+              animatedTexts: [
+                TyperAnimatedText(
+                  data[0]["name"],
+                  speed: Duration(milliseconds: 60),
+                ),
+                TyperAnimatedText(
+                  data[1]["name"],
+                  speed: Duration(milliseconds: 60),
+                ),
+                TyperAnimatedText(
+                  data[2]["name"],
+                  speed: Duration(milliseconds: 60),
+                ),
+              ],
+            );
+          }else{
+            return SizedBox();
+          }
+
+      },
     );
   }
 }
